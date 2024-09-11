@@ -1,8 +1,8 @@
 #include "led_out.h"
 #include "pico/stdlib.h"
-#include "stdint.h"
+#include <stdint.h>
 
-static const uint32_t MASK_9_2 = 0x000003fc;
+const uint32_t MASK_9_2 = 0x000003fc;
 void led_out_init(){
 
 
@@ -19,6 +19,5 @@ gpio_set_dir_out_masked(MASK_9_2);
 
 
 void led_out_write(uint8_t val){
-    uint32_t outval = val; 
-    gpio_put_masked(MASK_9_2, outval<<2); //writrs the val value to gpio 9 through 2. Need to shift by 2 to align it with bits 9 through 2. 
+    gpio_put_masked(MASK_9_2, val<<2); //writrs the val value to gpio 9 through 2. Need to shift by 2 to align it with bits 9 through 2. 
 }

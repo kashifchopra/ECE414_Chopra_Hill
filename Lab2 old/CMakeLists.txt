@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.13)
 
-include(pico_sdk_import.cmake)
+set(PICO_SDK_PATH "C:/Users/choprak/Documents/pico/pico-sdk")
+include(${PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 project(Lab2)
 
 pico_sdk_init()
 
 add_executable(Lab2
-        blink2.c
         led_out.c
-        sw_in.c
+	led_out.h
+	sw_in.c
+	sw_in.h
+	main.c
         )
 
 # pull in common dependencies

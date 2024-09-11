@@ -2,11 +2,11 @@
 #include "pico/stdlib.h"
 #include "stdint.h"
 
-static const uint32_t MASK_17_16 = 0x00030000; //mask for gpio 17 and 16
 
 void sw_in_init(){
 //low level code to initialise port 
 
+const uint32_t MASK_17_16 = 0x00030000; //mask for gpio 17 and 16
 
 gpio_init_mask(MASK_17_16);
 gpio_set_dir_in_masked(MASK_17_16);
