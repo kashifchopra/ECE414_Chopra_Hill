@@ -20,6 +20,12 @@ int main() {
     led_out_init(); 
 
     while(1){
+
+        gpio_put(PICO_DEFAULT_LED_PIN, 1);
+        sleep_ms(500);
+        gpio_put(PICO_DEFAULT_LED_PIN, 0);
+        sleep_ms(400);
+
         in1 = sw_in_read1();
         in2 = sw_in_read2();
 
@@ -36,6 +42,11 @@ int main() {
             out = 0x00; //turn off all LEDs
         }
         led_out_write(out);
+
+
+        //testing for blink function:
+
+      
 }
 
 return 0; 

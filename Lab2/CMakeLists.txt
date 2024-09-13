@@ -7,9 +7,11 @@ project(Lab2)
 pico_sdk_init()
 
 add_executable(Lab2
-        blink2.c
+        main.c
+        led_out.h
         led_out.c
         sw_in.c
+        sw_in.h
         )
 
 # pull in common dependencies
