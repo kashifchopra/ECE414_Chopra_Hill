@@ -200,14 +200,45 @@ case L8:
 break;
 
 case WIN1:
-
+    STATE = INITIAL;
 break;
 
 case WIN2:
-
+    STATE = INITIAL;
 break;
 
 
 } //switch
 
+//need to code leds for each state 
+
 } //tickfct
+
+
+
+void main(){
+    uint32_t t1, t2, t1_debounce, t2_debounce;
+    stdio_init_all();
+    sw_in_init();
+    led_out_init();
+    bool led_state = true;
+    static int DBPER = 50; //variable debouncer period 
+    t1 = timer_read();
+    t1_debounce = timer_read();
+
+    while(1){
+        t2 = timer_read();
+        t2_debounce() = timer_read();
+
+        if(timer_elapsed_ms(t1_db, t2_db) > DBPER){
+            debounce_sw1_tick();
+            debounce_sw2_tick();
+            t1_debounce = t2_debounce;
+        }
+
+        if(timer_elapsed_ms(t1, t2) < GAMEPERIOD){
+            TickFct_Pong();
+            t1 = t2;
+        }
+    }
+}
