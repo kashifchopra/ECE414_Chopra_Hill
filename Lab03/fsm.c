@@ -48,164 +48,111 @@ void TickFct_Pong(){
 switch(STATE){
 
 case INITIAL:
-        serve1 = rand() % 2; // Randomly select serve
-        state = serve1 ? SERVE1 : SERVE2;
+    printf("Game Starts: Choosing Server...");
+        if(rand() % 2 == 0){
+            serve1 = true;
+        } else {
+            serve1 = false;
+        }
+        STATE = serve1 ? SERVE1 : SERVE2;
     break;
 
 case SERVE1:
     printf("Serve 1");
     led_out_write(0b10000000);
     if(btn1_pressed){
-        STATE = L1;
+        right = true;
+        serve1 = true;
+        STATE = L2;
     } 
-    right = true;
-    serve1 = true;
+    
     break; //end
 
 case SERVE2:
     printf("Serve 2");
     led_out_write(0b00000001);
     if(btn2_pressed){
-        STATE = L8;
-    } else if(!serve1 && !btn2_pressed){
-        STATE = SERVE2; 
-    } else if(!serve1 && btn2_pressed){
-        STATE = L8;
-    } else {
-        STATE = SERVE2;
-    }
-    right = false;
-    serve1 = false;
+        right = false;
+        serve1 = false;
+        STATE = L7;
+    } 
     break; //end
 
 case L1:
     printf("L1");
-    if(right && serve1){ //for serving only 
+    if(btn1_pressed && !right){
+        GAMEPERIOD = (GAMEPERIOD > 100) ? GAMEPERIOD - 5 : GAMEPERIOD;
         STATE = L2;
-        !serve1;
-    } else if(btn1_pressed && right && !serve1){ //for returning
-        STATE = L2;
-        if(GAMEPERIOD > 100){
-            GAMEPERIOD = GAMEPERIOD - 5; //soeed up return speed after every volley
-        }
-   } else if(!btn1_pressed && !serve1){
+        right = true;
+    } else if(!btn1_pressed && !right){
+        winner = false;
         STATE = WIN2a;
-        winner = 1;
-   } else if(!btn1_pressed && serve1){
-        STATE = L1;
-   } else {
-        STATE = L1;
-   }
+    }
 break;
 
+//leds 2-8 have no feedback from button input 
 case L2:
     printf("L2");
-    if(right && !btn2_pressed){
+    if(right){
         STATE = L3;
-        right = true;
-    } else if(right && btn2_pressed){
-        STATE = L3;
-        winner = 0; //set right as pot. winner
-    } else if(!right && !btn1_pressed){ //going left now 
+    } else if(!right){
         STATE = L1;
-        right = 1;
-    } else if(!right && btn1_pressed) {
-        STATE = L1;
-        winner = 1; //set left as pot. winner
     }
 break;
 
 case L3:
     printf("L3");
-    if(right && !btn2_pressed){
+    if(right){
         STATE = L4;
-        right = true;
-    } else if(right && btn2_pressed){
-        STATE = L4;
-        winner = 0;
-    } else if(!right && !btn1_pressed){ //going left now 
+    } else if(!right){
         STATE = L2;
-        right = 0;
-    } else if(!right && btn1_pressed) {
-        STATE = L1;
-        winner = 1;
     }
 break;
 
 case L4:
     printf("L4");
-    if(right && !btn2_pressed){
+    if(right){
         STATE = L5;
-        right = true;
-    } else if(right && btn2_pressed){
-        STATE = L5;
-        winner = 0;
-    } else if(!right && !btn1_pressed){ //going left now 
+    } else if(!right){
         STATE = L3;
-        right = 0;
-    } else if(!right && btn1_pressed) {
-        STATE = L3;
-        winner = 1;
     }
 break;
 
 case L5:
     printf("L5");
-    if(right && !btn2_pressed){
+    if(right){
         STATE = L6;
-        right = true;
-    } else if(right && btn2_pressed){
-        STATE = L6;
-        winner = 0;
-    } else if(!right && !btn1_pressed){ //going left now 
+    } else if(!right){
         STATE = L4;
-        right = 0;
-    } else if(!right && btn1_pressed) {
-        STATE = L4;
-        winner = 1;
     }
 break;
 
 case L6:
     printf("L6");
-    if(right && !btn2_pressed){
+    if(right){
         STATE = L7;
-        right = true;
-    } else if(right && btn2_pressed){
-        STATE = L7;
-        winner = 0;
-    } else if(!right && !btn1_pressed){ //going left now 
+    } else if(!right){
         STATE = L5;
-        right = 0;
-    } else if(!right && btn1_pressed) {
-        STATE = L5;
-        winner = 1;
     }
 break;
 
 case L7:
     printf("L7");
-    if(right && !btn2_pressed){
+    if(right){
         STATE = L8;
-        right = true;
-    } else if(right && btn2_pressed){
-        STATE = L8;
-        winner = 0;
-    } else if(!right && !btn1_pressed){ //going left now 
+    } else if(!right){
         STATE = L6;
-        right = 0;
-    } else if(!right && btn1_pressed) {
-        STATE = L6;
-        winner = 1;
     }
 break;
 
 case L8:
     printf("L8");
-    if (!btn2_pressed){
+    if (!btn2_pressed && right){
+        GAMEPERIOD = (GAMEPERIOD > 100) ? GAMEPERIOD - 5 : GAMEPERIOD;
+        winner = true;
         STATE = WIN1a;
-        winner = 0;
-    } else if (btn2_pressed && !right){
+    } else if (btn2_pressed && right){
+        right = false;
         STATE = L7;
     }
 break;
@@ -219,21 +166,21 @@ case WIN1a:
 break;
 case WIN1b:
     led_out_write(0b00000000);
-    STATE = WIN1b;
+    STATE = WIN1c;
 break;
 case WIN1c:
     printf("Player 1 Wins!");
     led_out_write(0b10000000);
-    STATE = WIN1b;
+    STATE = WIN1d;
 break;
 case WIN1d:
     led_out_write(0b00000000);
-    STATE = WIN1b;
+    STATE = WIN1e;
 break;
 case WIN1e:
     printf("Player 1 Wins!");
     led_out_write(0b10000000);
-    STATE = WIN1b;
+    STATE = WIN1f;
 break;
 case WIN1f:
     led_out_write(0b00000000);
@@ -249,21 +196,21 @@ case WIN2a:
 break;
 case WIN2b:
     led_out_write(0b00000000);
-    STATE = WIN2b;
+    STATE = WIN2c;
 break;
 case WIN2c:
     printf("Player 2 Wins!");
     led_out_write(0b00000001);
-    STATE = WIN2b;
+    STATE = WIN2d;
 break;
 case WIN2d:
     led_out_write(0b00000000);
-    STATE = WIN2b;
+    STATE = WIN2e;
 break;
 case WIN2e:
     printf("Player 2 Wins!");
     led_out_write(0b00000001);
-    STATE = WIN2b;
+    STATE = WIN2f;
 break;
 case WIN2f:
     led_out_write(0b00000000);
@@ -296,7 +243,7 @@ switch(STATE){
         led_out_write(0b00000010);
     break;
     case L8:
-        led_out_write(0b10000001);
+        led_out_write(0b00000001);
     break;
 }
 
@@ -350,7 +297,7 @@ void main() {
             t1_debounce = t2;
         }
 
-        if(timer_elapsed_ms(t1, t2) < GAMEPERIOD) {
+        if(timer_elapsed_ms(t1, t2) >= GAMEPERIOD) {
             TickFct_Pong();
             t1 = t2;
         }
