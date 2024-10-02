@@ -34,7 +34,7 @@ int main() {
     
     while(1){
         //tft_fillScreen(ILI9341_BLACK);
-        tft_setCursor(20, 100);
+        tft_setCursor(10, 100);
         tft_setTextColor(ILI9340_WHITE); tft_setTextSize(2);
 
         //erase old text
@@ -46,7 +46,7 @@ int main() {
         p.y = 0;
         p.z = 0;
         getPoint(&p);
-        tft_setCursor(20, 100);
+        tft_setCursor(10, 100);
         tft_setTextColor(ILI9340_WHITE);
         sprintf(buffer,"x: %d, y: %d, z: %d", p.x, p.y, p.z);
         tft_writeString(buffer);

@@ -18,29 +18,29 @@ void ts_lcd_init(){
 
 
 //status function - returns true when display is touched 
-bool get_ts_lcd(uint16_t *pz){
+bool get_ts_lcd(uint16_t *px, uint16_t *py){
 //TO CHECK: 
-if (*pz < 1000) return true; 
+if((*px >= 700) && (*px <= 3500) && (*py >= 500) && (*py <= 3500) ) return true; 
 return false; 
 }
 
 
 
-uint32_t interpolateX(uint16_t px){
+uint64_t interpolateX(uint32_t px){
 
 uint32_t x_lcd = 0; 
 
-x_lcd = (px - 0)*(320-0)/(4096 -0) + 0;
+x_lcd = (px - 0)*(240-0)/(4096 -0) + 0;
 
 return x_lcd; 
 
 }
 
-uint32_t interpolateY(uint16_t py){
+uint64_t interpolateY(uint32_t py){
 
 uint32_t y_lcd = 0; 
 
-y_lcd = (py - 0)*(240-0)/(4096 -0) - 0; //could do -30 to calibrate it to get it at exact 0
+y_lcd = (py - 0)*(320-0)/(4096 -0) + 0;
 
 return y_lcd; 
 }
@@ -54,10 +54,11 @@ int main(){
                 p.y = 0;
                 p.z = 0;
 
+    char string[30]; 
     char buffer[30];
 
-    uint32_t savedX;
-    uint32_t savedY;
+    uint64_t savedX;
+    uint64_t savedY;
     //initialise LCD touchscreen 
     ts_lcd_init();
 
@@ -67,15 +68,12 @@ int main(){
 
         getPoint(&p);
 
-        tft_fillScreen(ILI9340_BLACK);
-        
-
         //if its touched, then write the location: 
-        if(get_ts_lcd(&p.z)){ //TOCHECK
+        if(get_ts_lcd(&p.x, &p.y)){ //TOCHECK
         
 
-                
-                tft_setCursor(100, 200);
+                //tft_fillScreen(ILI9341_BLACK);
+                tft_setCursor(20, 100);
                 tft_setTextColor(ILI9340_WHITE); tft_setTextSize(2);
 
                 //erase old text
@@ -84,32 +82,27 @@ int main(){
                 
                 
                 //getPoint(&p);
-                tft_setCursor(100, 200);
+                tft_setCursor(20, 100);
                 tft_setTextColor(ILI9340_WHITE);
-                sprintf(buffer,"x: %d, y: %d", interpolateX(p.x), interpolateY(p.y)); 
-                tft_writeString(buffer); 
-               //tft_writeString("TOUCHED"); 
+                sprintf(buffer,"x: %d, y: %d", interpolateX(p.x), interpolateY(p.y));
+                tft_writeString(buffer);
             
                 //save most recent coordinates as whole string (could have saved p.x, p.y etc individually too)
                 //string = buffer; 
                 savedX = interpolateX(p.x);
-                savedY = interpolateY(p.y);
+                savedY = interpolateX(p.y);
 
                 sleep_ms(100);
             
         } else{
             //print the old values 
-            tft_setCursor(100,200);
+            tft_setCursor(20,100);
             tft_setTextColor(ILI9340_WHITE);
-            sprintf(buffer,"x: %d, y: %d", savedX, savedY); //TOCHECK
-            tft_writeString(buffer);
+            sprintf(string,"x: %d, y: %d",savedX,savedY); //TOCHECK
+            tft_writeString(string);
 
             //print the old cursor 
         }
-
-        tft_drawFastHLine(savedX-5, savedY, 10, ILI9340_RED);
-        tft_drawFastVLine(savedX, savedY-5, 10, ILI9340_RED);
-        
         
         }
 
