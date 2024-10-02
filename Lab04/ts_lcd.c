@@ -26,23 +26,23 @@ return false;
 
 
 
-uint32_t interpolateX(uint16_t px){
+uint32_t interpolateX(uint16_t px){ //long side for us
 
 uint32_t x_lcd = 0; 
 
-x_lcd = (px - 0)*(320-0)/(4096 -0) + 0;
+x_lcd = (px - 0)*(320-0)/(4096 -0) + 0; //changed from 4096 to 8000
 
-return x_lcd; 
+return (320 - x_lcd); //x given by getPoint is in opposite to our orientation
 
 }
 
-uint32_t interpolateY(uint16_t py){
+uint32_t interpolateY(uint16_t py){  // short side for us
 
 uint32_t y_lcd = 0; 
 
-y_lcd = (py - 0)*(240-0)/(4096 -0) - 0; //could do -30 to calibrate it to get it at exact 0
+y_lcd = (py - 0)*(240-0)/(2730 -0) - 65; // -65 to calibrate it to get it at exact 0
 
-return y_lcd; 
+return (y_lcd); // values were switched in the getPpint function cos that assumes a different screen rotation and axes
 }
 
 
@@ -86,14 +86,14 @@ int main(){
                 //getPoint(&p);
                 tft_setCursor(100, 200);
                 tft_setTextColor(ILI9340_WHITE);
-                sprintf(buffer,"x: %d, y: %d", interpolateX(p.x), interpolateY(p.y)); 
+                sprintf(buffer,"x: %d, y: %d", interpolateX(p.y), interpolateY(p.x)); 
                 tft_writeString(buffer); 
                //tft_writeString("TOUCHED"); 
             
                 //save most recent coordinates as whole string (could have saved p.x, p.y etc individually too)
                 //string = buffer; 
-                savedX = interpolateX(p.x);
-                savedY = interpolateY(p.y);
+                savedY = interpolateY(p.x);
+                savedX = interpolateX(p.y);
 
                 sleep_ms(100);
             
