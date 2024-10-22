@@ -6,7 +6,7 @@
 #include "stdint.h"
 
 //FSM for all calculator operations
-uint32_t tckFnct_Calculator(uint32_t input);
+void tckFnct_Calculator();
 
 
 #endif
