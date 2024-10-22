@@ -200,8 +200,8 @@ void drawUI(){
     tft_writeString("/");
 
     //HardCoded Num example
-    setCursor(260, 2);
-    tft_writeString("kasheef");
+    //tft_setCursor(230, 2);
+    //tft_writeString("kasheef");
 /////////////////////////////////
 
     //RECT COORDINATES: 
