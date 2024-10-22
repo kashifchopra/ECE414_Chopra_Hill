@@ -1,8 +1,11 @@
 #ifndef USER_INTERFACE
 #define USER_INTERFACE
 
-#include "TFTMaster.h"
+#include <stdio.h>
 #include "pico/stdlib.h"
-#include "stdint.h"
+#include "hardware/gpio.h"
+#include "hardware/adc.h"
+#include "TouchScreen.h"
+#include "TFTMaster.h"
 
-#endif
+void drawUI();
