@@ -1,9 +1,9 @@
-
-#include "hardware/gpio.h"
-#include "TFTMaster.h"
-#include <stdio.h>
 #include "pico/stdlib.h"
-#include "ts_lcd.h"
+#include "TouchScreen.h"
+#include "TFTMaster.h"
+#include "hardware/gpio.h"
+#include "hardware/adc.h"
+#include <stdio.h>
 
 
 void drawUI(){
@@ -71,7 +71,7 @@ void drawUI(){
     tft_setTextColor(ILI9340_WHITE);
     tft_setCursor(277,60);
     sprintf(buffer4, "%c", "+");
-    tft_writeString(buffer4);
+    tft_writeString("+");
 
 ///////////////////////////
 
@@ -113,7 +113,7 @@ void drawUI(){
     tft_setTextColor(ILI9340_WHITE);
     tft_setCursor(277,110);
     sprintf(buffer8, "%c", "-");
-    tft_writeString(buffer8);
+    tft_writeString("-");
 
 /////////////////////////////////
 
@@ -154,8 +154,8 @@ void drawUI(){
     tft_setTextSize(2);
     tft_setTextColor(ILI9340_WHITE);
     tft_setCursor(277,160);
-    sprintf(buffer12, "%c", "*");
-    tft_writeString(buffer12);
+    sprintf(buffer12, "%c", "X");
+    tft_writeString("X");
 
 /////////////////////////////////
 
@@ -177,7 +177,7 @@ void drawUI(){
     tft_setTextColor(ILI9340_WHITE);
     tft_setCursor(117,210);
     sprintf(buffer14, "%s", "C");
-    tft_writeString(buffer14);
+    tft_writeString("C");
 
     // Display =
     tft_setCursor(0,0);
@@ -187,7 +187,7 @@ void drawUI(){
     tft_setTextColor(ILI9340_WHITE);
     tft_setCursor(192,210);
     sprintf(buffer15, "%c", "=");
-    tft_writeString(buffer15);
+    tft_writeString("=");
     
     // Display /
     tft_setCursor(0,0);
@@ -197,8 +197,11 @@ void drawUI(){
     tft_setTextColor(ILI9340_WHITE);
     tft_setCursor(277,210);
     sprintf(buffer16, "%c", "/");
-    tft_writeString(buffer16);
+    tft_writeString("/");
 
+    //HardCoded Num example
+    setCursor(260, 2);
+    tft_writeString("kasheef");
 /////////////////////////////////
 
     //RECT COORDINATES: 
