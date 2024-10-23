@@ -14,6 +14,9 @@ target_sources(Lab5 PRIVATE
         main.c
         user_interface.c
         TFTMaster.c
+        touchNum.c
+        ts_lcd.c
+        
         )
 
 # pull in common dependencies

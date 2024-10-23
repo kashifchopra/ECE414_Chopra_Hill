@@ -40,44 +40,44 @@ int getInput(int x, int y){
 
     //SECOND ROW 
     if((x > 10 && x < 75) && (y > 90 && y < 130)){
-        return 7;
+        return 4;
     }
     if((x > 85 && x < 150) && (y > 90 && y < 130)){
-        return 8;
+        return 5;
     }
     if((x > 160 && x < 225) && (y > 90 && y < 130)){
-        return 9;
+        return 6;
     }
     if((x > 245 && x < 310) && (y > 90 && y < 130)){
-        return 10;
+        return 11;
     }
 
     //THIRD ROW 
     if((x > 10 && x < 75) && (y > 140 && y < 180)){
-        return 7;
+        return 1;
     }
     if((x > 85 && x < 150) && (y > 140 && y < 180)){
-        return 8;
+        return 2;
     }
     if((x > 160 && x < 225) && (y > 140 && y < 180)){
-        return 9;
+        return 3;
     }
     if((x > 245 && x < 310) && (y > 140 && y < 180)){
-        return 10;
+        return 12;
     }
 
     //FOURTH ROW    
     if((x > 10 && x < 75) && (y > 190 && y < 230)){
-        return 7;
+        return 0;
     }
     if((x > 85 && x < 150) && (y > 190 && y < 230)){
-        return 8;
+        return 15;
     }
     if((x > 160 && x < 225) && (y > 190 && y < 230)){
-        return 9;
+        return 14;
     }
     if((x > 245 && x < 310) && (y > 190 && y < 230)){
-        return 10;
+        return 13;
     }
 
 

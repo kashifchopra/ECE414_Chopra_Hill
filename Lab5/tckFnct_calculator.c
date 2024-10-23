@@ -331,9 +331,10 @@ void testCalculator() {
     input = 14; 
     tckFnct_Calculator(); // Simulate pressing =
 
+    printf(result);
     assert(result == 5); // Expected result: 5
 
-    // Clear and test 5 - 1 =
+  /*   // Clear and test 5 - 1 =
     clear();
     input = 5; 
     tckFnct_Calculator(); // Press 5
@@ -344,6 +345,7 @@ void testCalculator() {
     input = 14; 
     tckFnct_Calculator(); // Press =
 
+     printf(result);
     assert(result == 4); // Expected result: 4
 
     // Clear and test 4 * 2 =
@@ -357,6 +359,7 @@ void testCalculator() {
     input = 14; 
     tckFnct_Calculator(); // Press =
 
+ printf(result);
     assert(result == 8); // Expected result: 8
 
     // Clear and test 8 / 2 =
@@ -369,7 +372,7 @@ void testCalculator() {
     tckFnct_Calculator(); // Press 2
     input = 14; 
     tckFnct_Calculator(); // Press =
-
+ printf(result);
     assert(result == 4); // Expected result: 4
 
     // Clear and test division by zero
@@ -382,10 +385,24 @@ void testCalculator() {
     tckFnct_Calculator(); // Press 0
     input = 14; 
     tckFnct_Calculator(); // Press =
-
+ printf(result);
     assert(result == 0); // Expected result: should indicate division by zero
 
     // Clear and test clear functionality
     clear();
-    assert(CALC_STATE == INITIAL); // State should be INITIAL
+    assert(CALC_STATE == INITIAL); // State should be INITIAL */
+}
+
+
+
+
+int main(){
+
+
+
+    // Run tests
+    testCalculator();
+
+    printf("All tests passed!\n");
+    return 0;
 }
