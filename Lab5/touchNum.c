@@ -6,22 +6,22 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-int input(){
-     struct TSPoint p;
-                p.x = 0;
-                p.y = 0;
-                p.z = 0;
+// int input(){
+//      struct TSPoint p;
+//                 p.x = 0;
+//                 p.y = 0;
+//                 p.z = 0;
     
-    uint32_t savedX;
-    uint32_t savedY;
+//     uint32_t savedX;
+//     uint32_t savedY;
 
-    if(get_ts_lcd(&p.z)){ //sense press 
-        savedY = interpolateY(p.x); //get x and y touch coordinates 
-        savedX = interpolateX(p.y);
-    }
+//     if(get_ts_lcd(&p.z)){ //sense press 
+//         savedY = interpolateY(p.x); //get x and y touch coordinates 
+//         savedX = interpolateX(p.y);
+//     }
 
-    return getInput(savedX, savedY); //plug into getInput, return specific button number
-}
+//     return getInput(savedX, savedY); //plug into getInput, return specific button number
+// }
 
 int getInput(int x, int y){
     //FIRST ROW 

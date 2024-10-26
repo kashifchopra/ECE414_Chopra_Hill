@@ -16,6 +16,7 @@ target_sources(Lab5 PRIVATE
         TFTMaster.c
         touchNum.c
         ts_lcd.c
+        TouchScreen.c
         
         )
 

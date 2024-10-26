@@ -13,37 +13,28 @@
 
 
 int main(){
-   
+   drawUI();
    int input;
    int x;
    int y;
    static int cursorX = 5;
 
-    struct TSPoint p;
-            p.x = 0;
-            p.y = 0;
-            p.z = 0;
+    struct TSPoint tp;
+            tp.x = 0;
+            tp.y = 0;
+            tp.z = 0;
     
     input = getInput(x, y);
 
    while(1){
-     drawUI(); //make the screen
-     //TEST FUNCTION FOR BUTTON ACCURACY
-      if(get_ts_lcd()){
-            getPoint(&p);
-            x = p.x;
-            y = p.y;
-            input = getInput(x, y);
+     
+     if(get_ts_lcd(tp.x, tp.y)){
+      
+      tft_setCursor(cursorX, 5);
+      tft_drawCircle(100,100,65,ILI9340_WHITE);
 
-          tft_setCursor(cursorX, 5);
-          tft_writeString(input);
-          cursorX = cursorX + 5;
-      }
+     }
 
-    
-    
-    
-    
     // previnput= input; //save prev input
     // //input = updateInput() or whatever function 
     // tckFnct_calculator();
