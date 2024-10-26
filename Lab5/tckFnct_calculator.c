@@ -30,7 +30,7 @@ void clear(){
     operator = 0; 
     input = 0; //maybe put elsewhere
     CALC_STATE = INITIAL; 
-    zeroErr = 0; //TOCHECK
+    zeroErr = 0; 
     errFlag = 0; //TOCHECK
 }
 
@@ -184,12 +184,13 @@ switch(CALC_STATE){
 
     case error: 
         
+        errFlag = 1;
 
         break;
 
     case div0: 
         
-        //zeroErr = 1; //CHECK AND TEST MORE
+        zeroErr = 1; 
 
         break;
 
@@ -304,7 +305,11 @@ switch(CALC_STATE){
         }else if(input>=10 && input <=13 ){
             CALC_STATE = op;
         } else if(input == 14){
-            CALC_STATE = result;
+            if(operator == 13 && n2 == 0){ // if dividing by 0 go to div0 state 
+                CALC_STATE = div0;
+            } else{
+                CALC_STATE = result;
+            }
         } else if(input == 15){
             CALC_STATE = INITIAL; 
         }
@@ -491,7 +496,8 @@ void testCalculator() {
 	
 
 
-	//Now test for 6 / 0: NOT COMPLETE YET - To further check as of 10/25/24
+	
+    	//Now test for 6 / 0: 
 	
 	input = 6;
 	tckFnct_Calculator(); 
@@ -502,16 +508,18 @@ void testCalculator() {
 	
 
 	input = 13;
-	tckFnct_Calculator(); // Simulate pressing +
+	tckFnct_Calculator(); // Simulate pressing /
 	printf("Tick 3 occured \n");
+	printf("    expected 13, operator is: %d\n",operator);
 	printf("    expected 6, N1 is: %d\n",n1);
 	printf("    expected 0, N2 is: %d\n",n2);
 	printf("    expected 0, res is: %d\n",res);
 	
 
 	input = 0;
-	tckFnct_Calculator(); // Simulate pressing 2
+	tckFnct_Calculator(); // Simulate pressing 0
 	printf("Tick 4 occured \n");
+	printf("    expected 13, operator is: %d\n",operator);
 	printf("    expected 6, N1 is: %d\n",n1);
 	printf("    expected 0, N2 is: %d\n",n2);
 	printf("    expected 0, zeroErr is: %d\n",zeroErr);
@@ -520,6 +528,10 @@ void testCalculator() {
 	input = 14;
 	tckFnct_Calculator(); // Simulate pressing =
 	printf("Tick 5 occured \n");
+	printf("    expected 13, operator is: %d\n",operator);
+	printf("    expected 6, N1 is: %d\n",n1);
+	printf("    expected 0, N2 is: %d\n",n2);
+	printf("    expected 14, input is: %d\n",input);
 	printf("    expected 0, zeroErr is: %d\n",zeroErr);
 	
 
