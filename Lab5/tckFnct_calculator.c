@@ -275,12 +275,12 @@ switch(CALC_STATE){
             CALC_STATE = op;
         } else if(input == 14){
 
-            if(operator == 13 && num2 == 0){ // if dividing by 0 go to div0 state 
+            if(operator == 13 && n2 == 0){ // if dividing by 0 go to div0 state 
                 CALC_STATE = div0;
+            } else{
+                CALC_STATE = result;
             }
-
-
-            CALC_STATE = result;
+            
         } else if(input == 15){
             CALC_STATE = INITIAL; 
         }
