@@ -21,6 +21,7 @@ int32_t res; //global variable to hold result value
 int32_t operator; //global variable to remember what the operator is
 bool errFlag; // flag to show its error
 bool zeroErr; //flag to show its div by 0
+int32_t stateVar;  
 
 //helper functions 
 void clear(){
@@ -32,6 +33,7 @@ void clear(){
     CALC_STATE = INITIAL; 
     zeroErr = 0; 
     errFlag = 0; //TOCHECK
+    stateVar = ""; 
 }
 
 int32_t operate(int32_t n1, int32_t n2, int32_t operator){
@@ -205,6 +207,7 @@ switch(CALC_STATE){
 
     case INITIAL: 
         printf("Current state: INITIAL \n");
+        stateVar = 1;
         //if input = any num 0-9, next state = num1
         
         if(0<=input && input<=9){
@@ -219,6 +222,7 @@ switch(CALC_STATE){
 
     case num1: 
     printf("Current state: num1 \n");
+    stateVar = 2;
         if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
             CALC_STATE = num1;
         }else if(input>=10 && input <=13 ){
@@ -232,6 +236,7 @@ switch(CALC_STATE){
 
     case neg1: 
     printf("Current state: neg1 \n");
+    stateVar = 8;
         if(0<=input && input<=9){ 
             CALC_STATE = num1neg;
         }else if(input>=10 && input <=14 ){
@@ -243,6 +248,7 @@ switch(CALC_STATE){
 
      case num1neg: //has same behaviour as num1, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
      printf("Current state: num1neg \n");
+     stateVar = 9;
         if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
             CALC_STATE = num1neg;
         }else if(input>=10 && input <=13 ){
@@ -257,6 +263,7 @@ switch(CALC_STATE){
 
     case op: 
     printf("Current state: op \n");
+    stateVar = 3;
         if(0<=input && input<=9){ 
             CALC_STATE = num2;
         }else if(input==10 || input ==12 || input ==13 || input ==14){
@@ -270,6 +277,7 @@ switch(CALC_STATE){
 
     case num2: 
     printf("Current state: num2 \n");
+    stateVar = 4;
         if(0<=input && input<=9){ 
             CALC_STATE = num2;
         }else if(input>=10 && input <=13 ){
@@ -289,6 +297,7 @@ switch(CALC_STATE){
 
      case neg2: 
      printf("Current state: neg2 \n");
+     stateVar = 10;
         if(0<=input && input<=9){ 
             CALC_STATE = num2neg;
         }else if(input>=10 && input <=14 ){
@@ -300,6 +309,7 @@ switch(CALC_STATE){
 
     case num2neg: //has same behaviour as num2, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
     printf("Current state: num2neg \n");
+    stateVar = 11;
         if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
             CALC_STATE = num2neg;
         }else if(input>=10 && input <=13 ){
@@ -317,6 +327,7 @@ switch(CALC_STATE){
 
     case result: 
     printf("Current state: result \n");
+    stateVar = 5;
         if(0<=input && input<=9){ 
             CALC_STATE = num1;
         }else if(input>=10 && input <=13 ){
@@ -330,6 +341,7 @@ switch(CALC_STATE){
 
     case error: 
     printf("Current state: error \n");
+    stateVar = 7;
         if(0<=input && input<=15){ 
             CALC_STATE = INITIAL;
         }
@@ -337,6 +349,7 @@ switch(CALC_STATE){
 
     case div0: 
     printf("Current state: div0 \n");
+    stateVar = 6; //div0 state = state number 6 (assigned arbitrarily)
         if(0<=input && input<=15){ 
             CALC_STATE = INITIAL;
         }
@@ -608,7 +621,7 @@ void testCalculator() {
 
 
 
-int main(){
+/* int main(){
 
 
 
@@ -618,3 +631,4 @@ int main(){
     printf("All tests passed!\n");
     return 0;
 }
+ */

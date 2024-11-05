@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-int input();
+//int input();
 int getInput(int x, int y);
 
 #endif

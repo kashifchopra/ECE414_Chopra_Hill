@@ -13,40 +13,28 @@
 
 
 int main(){
-   drawUI();
-   int input;
-   int x;
-   int y;
-   static int cursorX = 5;
 
-    struct TSPoint tp;
-            tp.x = 0;
-            tp.y = 0;
-            tp.z = 0;
-    
-    input = getInput(x, y);
+   ts_lcd_init(); 
 
-   while(1){
-     
-     if(get_ts_lcd(tp.x, tp.y)){
-      
-      tft_setCursor(cursorX, 5);
-      tft_drawCircle(100,100,65,ILI9340_WHITE);
 
-     }
+    while(1){
+        drawUI();
+        ts_lcd_funct(); //this sets the values of savedX and savedY
+        input = getInput(savedX, savedY);
+
+        if(get_ts_lcd(&p.z)){
+            tckFnct_Calculator();
+            /* if(stateVar=="result"){
+                screenOut = res;
+            } else{ //add errFlag and zeroErr case here too later
+                screenOut = input;
+            } */
+        }
+    }
 
     // previnput= input; //save prev input
     // //input = updateInput() or whatever function 
     // tckFnct_calculator();
-
-   }
-   
-
-
-    /* // Run tests
-    testCalculator();
-
-    printf("All tests passed!\n"); */
     return 0;
 }
 

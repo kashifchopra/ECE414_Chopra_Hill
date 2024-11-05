@@ -5,6 +5,8 @@
 #include "hardware/adc.h"
 #include <stdio.h>
 
+char screenOut[30]; //for numerical display at top of screen
+
 
 void drawUI(){
 
@@ -200,8 +202,9 @@ void drawUI(){
     tft_writeString("/");
 
     //HardCoded Num example
-    //tft_setCursor(230, 2);
-    //tft_writeString("kasheef");
+    tft_setCursor(210, 2);
+    tft_writeString(screenOut);
+
 /////////////////////////////////
 
     //RECT COORDINATES: 

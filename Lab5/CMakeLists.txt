@@ -17,7 +17,7 @@ target_sources(Lab5 PRIVATE
         touchNum.c
         ts_lcd.c
         TouchScreen.c
-        
+        tckFnct_calculator.c
         )
 
 # pull in common dependencies

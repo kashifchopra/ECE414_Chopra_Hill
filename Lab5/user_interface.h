@@ -8,4 +8,6 @@
 #include "TouchScreen.h"
 #include "TFTMaster.h"
 
+extern char screenOut[30];
+
 void drawUI();
