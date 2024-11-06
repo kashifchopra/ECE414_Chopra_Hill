@@ -20,6 +20,7 @@ extern int32_t stateVar;
 void clear();
 int32_t operate(int32_t n1, int32_t n2, int32_t input);
 bool err();
+void processInp();
 
 //FSM for all calculator operations
 void tckFnct_Calculator();

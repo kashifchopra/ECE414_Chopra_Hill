@@ -27,17 +27,15 @@ void ts_lcd_init(){
     p.x = 0;
     p.y = 0;
     p.z = 0;  
-    tft_fillRect(10, 10, 50, 50, ILI9340_RED);//test
-
-     sleep_ms(100);
 }
 
 
 //status function - returns true when display is touched 
 bool get_ts_lcd(uint16_t *pz){
-//TO CHECK: 
-if (*pz < 1000) return true; 
-return false; 
+    getPoint(&p);
+
+    if (*pz < 1000) return true; 
+    return false; 
 }
 
 
@@ -64,7 +62,8 @@ return (y_lcd); // values were switched in the getPpint function cos that assume
 
 
 void ts_lcd_funct(){
-
+        static uint32_t lastTouchTime = 0;
+        const uint32_t dbDelay = 200; //ms
                 
         // get input values:
 
@@ -73,7 +72,15 @@ void ts_lcd_funct(){
 
         //if its touched, then write the location: 
         if(get_ts_lcd(&p.z)){ //TOCHECK
-        
+               uint32_t currTime = to_ms_since_boot(get_absolute_time());
+               if(currTime - lastTouchTime >= dbDelay){
+                    savedY = interpolateY(p.x);
+                    savedX = interpolateX(p.y);
+                    lastTouchTime = currTime; //updates the last touch time
+
+                    tft_drawFastHLine(savedX-5, savedY, 10, ILI9340_RED);
+                    tft_drawFastVLine(savedX, savedY-5, 10, ILI9340_RED);
+               }
 
                 
                /*  tft_setCursor(100, 200);
@@ -93,12 +100,11 @@ void ts_lcd_funct(){
             
                 //save most recent coordinates as whole string (could have saved p.x, p.y etc individually too)
                 //string = buffer; 
-                savedY = interpolateY(p.x);
-                savedX = interpolateX(p.y);
+                
 
-                sleep_ms(100);
             
-        } else{
+            
+        
             //print the old values - comment out 
            // tft_setCursor(100,200);
             //tft_setTextColor(ILI9340_WHITE);
@@ -108,7 +114,6 @@ void ts_lcd_funct(){
             //print the old cursor 
         }
 
-       // tft_drawFastHLine(savedX-5, savedY, 10, ILI9340_RED);
-       // tft_drawFastVLine(savedX, savedY-5, 10, ILI9340_RED);
+        
  
 }

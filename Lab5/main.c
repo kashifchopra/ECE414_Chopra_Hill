@@ -15,15 +15,18 @@
 int main(){
 
    ts_lcd_init(); 
-
+   drawUI();
 
     while(1){
-        drawUI();
-        ts_lcd_funct(); //this sets the values of savedX and savedY
-        input = getInput(savedX, savedY);
+        
+        if(get_ts_lcd(&p.z)){ //if touch detected
+            
+            
+                ts_lcd_funct(); //sets values of savedX and SavedY
+                // uint32_t val = getInput(savedX, savedY); //gets input value
+                // processInp(val); //runs calc
 
-        if(get_ts_lcd(&p.z)){
-            tckFnct_Calculator();
+            // tckFnct_Calculator();
             /* if(stateVar=="result"){
                 screenOut = res;
             } else{ //add errFlag and zeroErr case here too later

@@ -5,6 +5,7 @@
 
 #include "TFTMaster.h"
 #include "pico/stdlib.h"
+#include <stdio.h>
 
 //first define states - 
 //INITIAL, num1, op, num2, result, error, (maybe div0 too)
@@ -22,6 +23,7 @@ int32_t operator; //global variable to remember what the operator is
 bool errFlag; // flag to show its error
 bool zeroErr; //flag to show its div by 0
 int32_t stateVar;  
+bool displayNeedsUpdate;
 
 //helper functions 
 void clear(){
@@ -29,11 +31,12 @@ void clear(){
     n2 = 0;
     res = 0;
     operator = 0; 
-    input = 0; //maybe put elsewhere
+    input = 0; 
     CALC_STATE = INITIAL; 
-    zeroErr = 0; 
-    errFlag = 0; //TOCHECK
-    stateVar = ""; 
+    zeroErr = false; 
+    errFlag = false; //TOCHECK
+    stateVar = 0;
+    displayNeedsUpdate = true; //forces UI to redraw after clear 
 }
 
 int32_t operate(int32_t n1, int32_t n2, int32_t operator){
@@ -54,311 +57,320 @@ bool err(){
     return false;
 }
 
+bool newInputRecieved = false;
 
+void processInp(uint32_t val){ //maybe in main??
+    input = val;
+    newInputRecieved = true;
+    tckFnct_Calculator();
+}
 
 //FSM: 
 void tckFnct_Calculator(){
 
-//define variables/flags 
+    if(!newInputRecieved){
+        return;
+    }
 
+    newInputRecieved = false;
 
-//define actions within each state with switch case 
-switch(CALC_STATE){
+    //define actions within each state with switch case 
+    switch(CALC_STATE){
 
-    case INITIAL: 
-        if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
-            n1 = input;
-        }else if(input==10 || input ==12 || input ==13 || input ==14){
-            // do nothing
-        }else if(input == 11){
-            // do nothing
-        } else if(input == 15){
-            clear();
-        }
-        
-        break;
-
-    case num1: 
-       if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
-           n1 = (n1*10) + input;
-        }else if(input>=10 && input <=13 ){
-           //save what the operator is
-           operator = input; 
-        } else if(input == 14){
-           res = n1; 
-        } else if(input == 15){
-            clear();
-        }
-        break;
-
-    case neg1: 
-         if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
-           n1 = input*(-1);
-        }else if(input>=10 && input <=14 ){
-           //no action only state change 
-        } else if(input == 15){
-            clear();
-        }
-
-        break;
-
-     case num1neg: //has same behaviour as num1, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
-       if(0<=input && input<=9){ //this handles numbers with multiple digits.
-           n1 = (n1*10) - input;
-        }else if(input>=10 && input <=13 ){
-           //save what the operator is
-           operator = input;  
-        } else if(input == 14){
-           res = n1; 
-        } else if(input == 15){
-            clear();
-        }
-
-        break;
-    
-
-    case op: 
-        if(0<=input && input<=9){ 
-            n2 = input; 
-        }else if(input==10 || input ==12 || input ==13 || input ==14){
-            //nothing or maybe set err = true. Then rem to set err = false in all other cases. 
-        }else if(input == 11){
-            //nothing
-        } else if(input == 15){
-            clear();
-        }
-        break;
-
-    case num2: 
-       
-        if(0<=input && input<=9){ 
-            n2 = n2*10 + input;
-        }else if(input>=10 && input <=13 ){
-            n1 = operate(n1,n2,operator);
-            //might need to rest n2 value here? 
-            //save what the new operator is
-           operator = input; 
-        } else if(input == 14){
-            res = operate(n1,n2,operator);
-        } else if(input == 15){
-            clear();  
-        }
-        break;
-
-     case neg2: 
-         if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
-           n2 = input*(-1);
-        }else if(input>=10 && input <=14 ){
-           //no action only state change 
-        } else if(input == 15){
-            clear();
-        }
-        break;
-
-    case num2neg: //has same behaviour as num2, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
-         if(0<=input && input<=9){ 
-            n2 = n2*10 - input;
-        }else if(input>=10 && input <=13 ){
-            n1 = operate(n1,n2,operator);
-            //might need to rest n2 value here? 
-            //save what the new operator is
-           operator = input; 
-        } else if(input == 14){
-            res = operate(n1,n2,operator);
-        } else if(input == 15){
-            clear();  
-        }
-        break;
-
-    case result: 
-        if(0<=input && input<=9){ 
-            n1 = input; 
-        }else if(input>=10 && input <=13 ){
-            n1 = result; 
-            //save what the operator is
-           operator = input; 
-        } else if(input == 14){
-            //nothing
-        } else if(input == 15){
-            clear();  
-        }
-        break;
-
-    case error: 
-        
-        errFlag = 1;
-
-        break;
-
-    case div0: 
-        
-        zeroErr = 1; 
-
-        break;
-
-    //default://do nothing
-        
-        break; 
-}
-
-
-//define state change scenarios with switch case
-switch(CALC_STATE){
-
-    case INITIAL: 
-        printf("Current state: INITIAL \n");
-        stateVar = 1;
-        //if input = any num 0-9, next state = num1
-        
-        if(0<=input && input<=9){
-            CALC_STATE = num1;
-            break;
-        } else if (input == 11){  // for -ve number sign 
-            CALC_STATE = neg1;
-        } else{
-            CALC_STATE = INITIAL;
-        }
-        break;
-
-    case num1: 
-    printf("Current state: num1 \n");
-    stateVar = 2;
-        if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
-            CALC_STATE = num1;
-        }else if(input>=10 && input <=13 ){
-            CALC_STATE = op;
-        } else if(input == 14){
-            CALC_STATE = result;
-        } else if(input == 15){
-            CALC_STATE = INITIAL; 
-        }
-        break;
-
-    case neg1: 
-    printf("Current state: neg1 \n");
-    stateVar = 8;
-        if(0<=input && input<=9){ 
-            CALC_STATE = num1neg;
-        }else if(input>=10 && input <=14 ){
-            CALC_STATE = error;
-        }else if(input == 15){
-            CALC_STATE = INITIAL; 
-        }
-        break;
-
-     case num1neg: //has same behaviour as num1, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
-     printf("Current state: num1neg \n");
-     stateVar = 9;
-        if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
-            CALC_STATE = num1neg;
-        }else if(input>=10 && input <=13 ){
-            CALC_STATE = op;
-        } else if(input == 14){
-            CALC_STATE = result;
-        } else if(input == 15){
-            CALC_STATE = INITIAL; 
-        }
-        break;
-    
-
-    case op: 
-    printf("Current state: op \n");
-    stateVar = 3;
-        if(0<=input && input<=9){ 
-            CALC_STATE = num2;
-        }else if(input==10 || input ==12 || input ==13 || input ==14){
-            CALC_STATE = error;
-        }else if(input == 11){
-            CALC_STATE = neg2;
-        } else if(input == 15){
-            CALC_STATE = INITIAL; 
-        }
-        break;
-
-    case num2: 
-    printf("Current state: num2 \n");
-    stateVar = 4;
-        if(0<=input && input<=9){ 
-            CALC_STATE = num2;
-        }else if(input>=10 && input <=13 ){
-            CALC_STATE = op;
-        } else if(input == 14){
-
-            if(operator == 13 && n2 == 0){ // if dividing by 0 go to div0 state 
-                CALC_STATE = div0;
-            } else{
-                CALC_STATE = result;
+        case INITIAL: 
+            if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
+                n1 = input;
+            }else if(input==10 || input ==12 || input ==13 || input ==14){
+                // do nothing
+            }else if(input == 11){
+                // do nothing
+            } else if(input == 15){
+                clear();
             }
             
-        } else if(input == 15){
-            CALC_STATE = INITIAL; 
-        }
-        break;
+            break;
 
-     case neg2: 
-     printf("Current state: neg2 \n");
-     stateVar = 10;
-        if(0<=input && input<=9){ 
-            CALC_STATE = num2neg;
-        }else if(input>=10 && input <=14 ){
-            CALC_STATE = error;
-        }else if(input == 15){
-            CALC_STATE = INITIAL; 
-        }
-        break;
-
-    case num2neg: //has same behaviour as num2, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
-    printf("Current state: num2neg \n");
-    stateVar = 11;
+        case num1: 
         if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
-            CALC_STATE = num2neg;
-        }else if(input>=10 && input <=13 ){
-            CALC_STATE = op;
-        } else if(input == 14){
-            if(operator == 13 && n2 == 0){ // if dividing by 0 go to div0 state 
-                CALC_STATE = div0;
-            } else{
-                CALC_STATE = result;
+            n1 = (n1*10) + input;
+            }else if(input>=10 && input <=13 ){
+            //save what the operator is
+            operator = input; 
+            } else if(input == 14){
+            res = n1; 
+            } else if(input == 15){
+                clear();
             }
-        } else if(input == 15){
+            break;
+
+        case neg1: 
+            if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
+            n1 = input*(-1);
+            }else if(input>=10 && input <=14 ){
+            //no action only state change 
+            } else if(input == 15){
+                clear();
+            }
+
+            break;
+
+        case num1neg: //has same behaviour as num1, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
+        if(0<=input && input<=9){ //this handles numbers with multiple digits.
+            n1 = (n1*10) - input;
+            }else if(input>=10 && input <=13 ){
+            //save what the operator is
+            operator = input;  
+            } else if(input == 14){
+            res = n1; 
+            } else if(input == 15){
+                clear();
+            }
+
+            break;
+        
+
+        case op: 
+            if(0<=input && input<=9){ 
+                n2 = input; 
+            }else if(input==10 || input ==12 || input ==13 || input ==14){
+                //nothing or maybe set err = true. Then rem to set err = false in all other cases. 
+            }else if(input == 11){
+                //nothing
+            } else if(input == 15){
+                clear();
+            }
+            break;
+
+        case num2: 
+        
+            if(0<=input && input<=9){ 
+                n2 = n2*10 + input;
+            }else if(input>=10 && input <=13 ){
+                n1 = operate(n1,n2,operator);
+                //might need to rest n2 value here? 
+                //save what the new operator is
+            operator = input; 
+            } else if(input == 14){
+                res = operate(n1,n2,operator);
+            } else if(input == 15){
+                clear();  
+            }
+            break;
+
+        case neg2: 
+            if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
+            n2 = input*(-1);
+            }else if(input>=10 && input <=14 ){
+            //no action only state change 
+            } else if(input == 15){
+                clear();
+            }
+            break;
+
+        case num2neg: //has same behaviour as num2, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
+            if(0<=input && input<=9){ 
+                n2 = n2*10 - input;
+            }else if(input>=10 && input <=13 ){
+                n1 = operate(n1,n2,operator);
+                //might need to rest n2 value here? 
+                //save what the new operator is
+            operator = input; 
+            } else if(input == 14){
+                res = operate(n1,n2,operator);
+            } else if(input == 15){
+                clear();  
+            }
+            break;
+
+        case result: 
+            if(0<=input && input<=9){ 
+                n1 = input; 
+            }else if(input>=10 && input <=13 ){
+                n1 = result; 
+                //save what the operator is
+            operator = input; 
+            } else if(input == 14){
+                //nothing
+            } else if(input == 15){
+                clear();  
+            }
+            break;
+
+        case error: 
+            
+            errFlag = 1;
+
+            break;
+
+        case div0: 
+            
+            zeroErr = 1; 
+
+            break;
+
+        //default://do nothing
+            
+            break; 
+    }
+
+
+    //define state change scenarios with switch case
+    switch(CALC_STATE){
+
+        case INITIAL: 
+            printf("Current state: INITIAL \n");
+            stateVar = 1;
+            //if input = any num 0-9, next state = num1
+            
+            if(0<=input && input<=9){
+                CALC_STATE = num1;
+                break;
+            } else if (input == 11){  // for -ve number sign 
+                CALC_STATE = neg1;
+            } else{
+                CALC_STATE = INITIAL;
+            }
+            break;
+
+        case num1: 
+        printf("Current state: num1 \n");
+        stateVar = 2;
+            if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
+                CALC_STATE = num1;
+            }else if(input>=10 && input <=13 ){
+                CALC_STATE = op;
+            } else if(input == 14){
+                CALC_STATE = result;
+            } else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+
+        case neg1: 
+        printf("Current state: neg1 \n");
+        stateVar = 8;
+            if(0<=input && input<=9){ 
+                CALC_STATE = num1neg;
+            }else if(input>=10 && input <=14 ){
+                CALC_STATE = error;
+            }else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+
+        case num1neg: //has same behaviour as num1, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
+        printf("Current state: num1neg \n");
+        stateVar = 9;
+            if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
+                CALC_STATE = num1neg;
+            }else if(input>=10 && input <=13 ){
+                CALC_STATE = op;
+            } else if(input == 14){
+                CALC_STATE = result;
+            } else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+        
+
+        case op: 
+        printf("Current state: op \n");
+        stateVar = 3;
+            if(0<=input && input<=9){ 
+                CALC_STATE = num2;
+            }else if(input==10 || input ==12 || input ==13 || input ==14){
+                CALC_STATE = error;
+            }else if(input == 11){
+                CALC_STATE = neg2;
+            } else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+
+        case num2: 
+        printf("Current state: num2 \n");
+        stateVar = 4;
+            if(0<=input && input<=9){ 
+                CALC_STATE = num2;
+            }else if(input>=10 && input <=13 ){
+                CALC_STATE = op;
+            } else if(input == 14){
+
+                if(operator == 13 && n2 == 0){ // if dividing by 0 go to div0 state 
+                    CALC_STATE = div0;
+                } else{
+                    CALC_STATE = result;
+                }
+                
+            } else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+
+        case neg2: 
+        printf("Current state: neg2 \n");
+        stateVar = 10;
+            if(0<=input && input<=9){ 
+                CALC_STATE = num2neg;
+            }else if(input>=10 && input <=14 ){
+                CALC_STATE = error;
+            }else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+
+        case num2neg: //has same behaviour as num2, just that when we type multiple digit negative numbers it does the math differently to get the number cos its negative
+        printf("Current state: num2neg \n");
+        stateVar = 11;
+            if(0<=input && input<=9){ //this handles numbers with multiple digits. It will be handles within the num1 state.
+                CALC_STATE = num2neg;
+            }else if(input>=10 && input <=13 ){
+                CALC_STATE = op;
+            } else if(input == 14){
+                if(operator == 13 && n2 == 0){ // if dividing by 0 go to div0 state 
+                    CALC_STATE = div0;
+                } else{
+                    CALC_STATE = result;
+                }
+            } else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+
+        case result: 
+        printf("Current state: result \n");
+        stateVar = 5;
+            if(0<=input && input<=9){ 
+                CALC_STATE = num1;
+            }else if(input>=10 && input <=13 ){
+                CALC_STATE = op;
+            } else if(input == 14){
+                CALC_STATE = result;
+            } else if(input == 15){
+                CALC_STATE = INITIAL; 
+            }
+            break;
+
+        case error: 
+        printf("Current state: error \n");
+        stateVar = 7;
+            if(0<=input && input<=15){ 
+                CALC_STATE = INITIAL;
+            }
+            break;
+
+        case div0: 
+        printf("Current state: div0 \n");
+        stateVar = 6; //div0 state = state number 6 (assigned arbitrarily)
+            if(0<=input && input<=15){ 
+                CALC_STATE = INITIAL;
+            }
+            break;
+
+        default:
             CALC_STATE = INITIAL; 
-        }
-        break;
-
-    case result: 
-    printf("Current state: result \n");
-    stateVar = 5;
-        if(0<=input && input<=9){ 
-            CALC_STATE = num1;
-        }else if(input>=10 && input <=13 ){
-            CALC_STATE = op;
-        } else if(input == 14){
-            CALC_STATE = result;
-        } else if(input == 15){
-            CALC_STATE = INITIAL; 
-        }
-        break;
-
-    case error: 
-    printf("Current state: error \n");
-    stateVar = 7;
-        if(0<=input && input<=15){ 
-            CALC_STATE = INITIAL;
-        }
-        break;
-
-    case div0: 
-    printf("Current state: div0 \n");
-    stateVar = 6; //div0 state = state number 6 (assigned arbitrarily)
-        if(0<=input && input<=15){ 
-            CALC_STATE = INITIAL;
-        }
-        break;
-
-    default:
-        CALC_STATE = INITIAL; 
-        break; 
-}
+            break; 
+    }
 }
 
 
