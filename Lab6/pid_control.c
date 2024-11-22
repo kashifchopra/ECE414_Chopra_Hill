@@ -107,6 +107,10 @@ void pid_control_fsm(){
         //init(); 
 
         //control state 
+
+
+        //TO continue with: State actions, 
+        //new module for speed sensor, motor control, screen 
         
 
 }
