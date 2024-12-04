@@ -42,11 +42,7 @@ void pir_init(){ //low level code to initialize port
 }
 
 bool pir_read(){ //boolean output of pir
-    if(gpio_get(pir_gpio)){
-        motion = true;
-    } else {
-        motion = false;
-    }
+    motion = gpio_get(pir_gpio);
     return motion;
 }
 
@@ -54,11 +50,58 @@ static enum STATE {
     INIT,
     UNOCC,
     OCC
-}
+} STATE;
 
+//want pir_read to be constantly running to continuously update motion variable
+//in main, run pir_read, then run tickFnct
 void tickFnct_pir(){
 
+    switch(STATE){
 
+        case INIT:
+            printf("Entering Intial State")
+            if(motion){
+                STATE = OCC;
+            } else {
+                STATE = UNOCC;
+            }
+        break;
+
+        case UNOCC:
+            printf("Unoccupied");
+            occupied = false;
+            if(motion){
+                occupied = true;
+                STATE = OCC;
+            }
+        break;
+
+        case OCC:
+            printf("Occupied");
+            while(1){
+                internal_cnt++;              
+                if(motion){
+                    occ_tmr_cnt = 0;
+                }
+
+                if(internal_cnt >= 60){ //will occur once every minute 
+                    if (!motion && occ_tmr_cnt << 20){
+                        occ_tmr_cnt++;
+                    } 
+                }
+                
+                if(occ_tmr_cnt >= 20){
+                    STATE = UNOCC;
+                }
+
+                delay(1000);
+            }
+            
+
+
+
+
+    }
 
 
 
@@ -67,10 +110,8 @@ void tickFnct_pir(){
 
 }
 
-
-//function to get pir data, HIGH will flag motion var to true, vice versa
-
-
+//can gpt for help, but need to get occupied state running a timer that will count to 60 seconds, then update 
+//occupied_timer_count vairable if no motion is detected 
 
 
 
